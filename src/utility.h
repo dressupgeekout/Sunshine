@@ -945,6 +945,7 @@ namespace util {
     struct endianness {
       enum : bool {
 #if defined(__BYTE_ORDER) && __BYTE_ORDER == __BIG_ENDIAN || \
+  defined(_BYTE_ORDER) && _BYTE_ORDER == _BIG_ENDIAN ||      \
   defined(__BIG_ENDIAN__) ||                                 \
   defined(__ARMEB__) ||                                      \
   defined(__THUMBEB__) ||                                    \
@@ -953,6 +954,7 @@ namespace util {
         // It's a big-endian target architecture
         little = false,
 #elif defined(__BYTE_ORDER) && __BYTE_ORDER == __LITTLE_ENDIAN || \
+  defined(_BYTE_ORDER) && _BYTE_ORDER == _LITTLE_ENDIAN ||        \
   defined(__LITTLE_ENDIAN__) ||                                   \
   defined(__ARMEL__) ||                                           \
   defined(__THUMBEL__) ||                                         \
