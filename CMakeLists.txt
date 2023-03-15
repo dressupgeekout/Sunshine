@@ -184,6 +184,9 @@ elseif(APPLE)
 else()
     add_compile_definitions(SUNSHINE_PLATFORM="linux")
 
+    set(PLATFORM_INCLUDE_DIRS
+            ${Boost_INCLUDE_DIR})
+
     option(SUNSHINE_ENABLE_DRM "Enable KMS grab if available" ON)
     option(SUNSHINE_ENABLE_X11 "Enable X11 grab if available" ON)
     option(SUNSHINE_ENABLE_WAYLAND "Enable building wayland specific code" ON)
@@ -386,6 +389,7 @@ ${CMAKE_BINARY_DIR}/generated-src/${filename}.h")
             pulse-simple)
 
     include_directories(
+            # XXX
             /usr/include/libevdev-1.0
             third-party/nv-codec-headers/include
             third-party/glad/include)
