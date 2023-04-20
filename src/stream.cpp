@@ -15,6 +15,7 @@
 extern "C" {
 #include <moonlight-common-c/src/RtpAudioQueue.h>
 #include <moonlight-common-c/src/Video.h>
+#include <enet/enet.h>
 #include <rs.h>
 }
 
