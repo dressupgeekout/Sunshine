@@ -14,7 +14,7 @@
 
 #include "utility.h"
 
-namespace proc {
+namespace sunshineproc {
 using file_t = util::safe_ptr_v2<FILE, int, fclose>;
 
 struct cmd_t {
@@ -107,7 +107,7 @@ std::tuple<std::string, std::string> calculate_app_id(const std::string &app_nam
 
 std::string validate_app_image_path(std::string app_image_path);
 void refresh(const std::string &file_name);
-std::optional<proc::proc_t> parse(const std::string &file_name);
+std::optional<sunshineproc::proc_t> parse(const std::string &file_name);
 
 extern proc_t proc;
 } // namespace proc

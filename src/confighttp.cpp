@@ -376,7 +376,7 @@ void saveApp(resp_https_t response, req_https_t request) {
   }
 
   outputTree.put("status", "true");
-  proc::refresh(config::stream.file_apps);
+  sunshineproc::refresh(config::stream.file_apps);
 }
 
 void deleteApp(resp_https_t response, req_https_t request) {
@@ -424,7 +424,7 @@ void deleteApp(resp_https_t response, req_https_t request) {
   }
 
   outputTree.put("status", "true");
-  proc::refresh(config::stream.file_apps);
+  sunshineproc::refresh(config::stream.file_apps);
 }
 
 void uploadCover(resp_https_t response, req_https_t request) {
@@ -694,7 +694,7 @@ void closeApp(resp_https_t response, req_https_t request) {
     response->write(data.str());
   });
 
-  proc::proc.terminate();
+  sunshineproc::proc.terminate();
   outputTree.put("status", true);
 }
 

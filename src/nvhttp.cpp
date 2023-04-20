@@ -639,7 +639,7 @@ void serverinfo(std::shared_ptr<typename SimpleWeb::ServerBase<T>::Response> res
   if(!config::nvhttp.resolutions.empty()) {
     tree.add_child("root.SupportedDisplayMode", display_nodes);
   }
-  auto current_appid = proc::proc.running();
+  auto current_appid = sunshineproc::proc.running();
   tree.put("root.PairStatus", pair_status);
   tree.put("root.currentgame", current_appid);
   tree.put("root.state", current_appid > 0 ? "SUNSHINE_SERVER_BUSY" : "SUNSHINE_SERVER_FREE");
@@ -684,7 +684,7 @@ void applist(resp_https_t response, req_https_t request) {
 
   apps.put("<xmlattr>.status_code", 200);
 
-  for(auto &proc : proc::proc.get_apps()) {
+  for(auto &proc : sunshineproc::proc.get_apps()) {
     pt::ptree app;
 
     app.put("IsHdrSupported"s, config::video.hevc_mode == 3 ? 1 : 0);
@@ -729,7 +729,7 @@ void launch(bool &host_audio, resp_https_t response, req_https_t request) {
 
   auto appid = util::from_view(get_arg(args, "appid"));
 
-  auto current_appid = proc::proc.running();
+  auto current_appid = sunshineproc::proc.running();
   if(current_appid > 0) {
     tree.put("root.resume", 0);
     tree.put("root.<xmlattr>.status_code", 400);
@@ -738,7 +738,7 @@ void launch(bool &host_audio, resp_https_t response, req_https_t request) {
   }
 
   if(appid > 0) {
-    auto err = proc::proc.execute(appid);
+    auto err = sunshineproc::proc.execute(appid);
     if(err) {
       tree.put("root.<xmlattr>.status_code", err);
       tree.put("root.gamesession", 0);
@@ -776,7 +776,7 @@ void resume(bool &host_audio, resp_https_t response, req_https_t request) {
     return;
   }
 
-  auto current_appid = proc::proc.running();
+  auto current_appid = sunshineproc::proc.running();
   if(current_appid == 0) {
     tree.put("root.resume", 0);
     tree.put("root.<xmlattr>.status_code", 503);
@@ -826,8 +826,8 @@ void cancel(resp_https_t response, req_https_t request) {
   tree.put("root.cancel", 1);
   tree.put("root.<xmlattr>.status_code", 200);
 
-  if(proc::proc.running() > 0) {
-    proc::proc.terminate();
+  if(sunshineproc::proc.running() > 0) {
+    sunshineproc::proc.terminate();
   }
 }
 
@@ -836,7 +836,7 @@ void appasset(resp_https_t response, req_https_t request) {
   print_req<SimpleWeb::HTTPS>(request);
 
   auto args      = request->parse_query_string();
-  auto app_image = proc::proc.get_app_image(util::from_view(get_arg(args, "appid")));
+  auto app_image = sunshineproc::proc.get_app_image(util::from_view(get_arg(args, "appid")));
 
   std::ifstream in(app_image, std::ios::binary);
   SimpleWeb::CaseInsensitiveMultimap headers;

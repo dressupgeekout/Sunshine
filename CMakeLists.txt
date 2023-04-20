@@ -451,43 +451,30 @@ set_source_files_properties(src/upnp.cpp PROPERTIES COMPILE_FLAGS -Wno-pedantic)
 set_source_files_properties(third-party/nanors/rs.c
         PROPERTIES COMPILE_FLAGS "-include deps/obl/autoshim.h -ftree-vectorize")
 
-# Pre-compiled binaries
-if(WIN32)
-    set(FFMPEG_PREPARED_BINARIES "${CMAKE_CURRENT_SOURCE_DIR}/third-party/ffmpeg-windows-x86_64")
-    set(FFMPEG_PLATFORM_LIBRARIES mfplat ole32 strmiids mfuuid mfx)
-elseif(APPLE)
-    if (CMAKE_SYSTEM_PROCESSOR STREQUAL "arm64")
-        set(FFMPEG_PREPARED_BINARIES "${CMAKE_CURRENT_SOURCE_DIR}/third-party/ffmpeg-macos-aarch64")
-    else()
-        set(FFMPEG_PREPARED_BINARIES "${CMAKE_CURRENT_SOURCE_DIR}/third-party/ffmpeg-macos-x86_64")
-    endif()
-else()
-    set(FFMPEG_PLATFORM_LIBRARIES va va-drm va-x11 vdpau X11)
-    if (CMAKE_SYSTEM_PROCESSOR STREQUAL "aarch64")
-        set(FFMPEG_PREPARED_BINARIES "${CMAKE_CURRENT_SOURCE_DIR}/third-party/ffmpeg-linux-aarch64")
-    else()
-        set(FFMPEG_PREPARED_BINARIES "${CMAKE_CURRENT_SOURCE_DIR}/third-party/ffmpeg-linux-x86_64")
-        list(APPEND FFMPEG_PLATFORM_LIBRARIES mfx)
-        set(CPACK_DEB_PLATFORM_PACKAGE_DEPENDS "libmfx1,")
-        set(CPACK_RPM_PLATFORM_PACKAGE_REQUIRES "intel-mediasdk >= 22.3.0,")
-    endif()
-endif()
-set(FFMPEG_INCLUDE_DIRS
-        ${FFMPEG_PREPARED_BINARIES}/include)
-if(EXISTS ${FFMPEG_PREPARED_BINARIES}/lib/libhdr10plus.a)
-    set(HDR10_PLUS_LIBRARY
-            ${FFMPEG_PREPARED_BINARIES}/lib/libhdr10plus.a)
-endif()
-set(FFMPEG_LIBRARIES
-        ${FFMPEG_PREPARED_BINARIES}/lib/libavcodec.a
-        ${FFMPEG_PREPARED_BINARIES}/lib/libavutil.a
-        ${FFMPEG_PREPARED_BINARIES}/lib/libcbs.a
-        ${FFMPEG_PREPARED_BINARIES}/lib/libSvtAv1Enc.a
-        ${FFMPEG_PREPARED_BINARIES}/lib/libswscale.a
-        ${FFMPEG_PREPARED_BINARIES}/lib/libx264.a
-        ${FFMPEG_PREPARED_BINARIES}/lib/libx265.a
-        ${HDR10_PLUS_LIBRARY}
-        ${FFMPEG_PLATFORM_LIBRARIES})
+
+
+#set(FFMPEG_INCLUDE_DIRS
+#        ${FFMPEG_PREPARED_BINARIES}/include)
+#if(EXISTS ${FFMPEG_PREPARED_BINARIES}/lib/libhdr10plus.a)
+#    set(HDR10_PLUS_LIBRARY
+#            ${FFMPEG_PREPARED_BINARIES}/lib/libhdr10plus.a)
+#endif()
+#set(FFMPEG_LIBRARIES
+#        ${FFMPEG_PREPARED_BINARIES}/lib/libavcodec.a
+#        ${FFMPEG_PREPARED_BINARIES}/lib/libavutil.a
+#        ${FFMPEG_PREPARED_BINARIES}/lib/libcbs.a
+#        ${FFMPEG_PREPARED_BINARIES}/lib/libSvtAv1Enc.a
+#        ${FFMPEG_PREPARED_BINARIES}/lib/libswscale.a
+#        ${FFMPEG_PREPARED_BINARIES}/lib/libx264.a
+#        ${FFMPEG_PREPARED_BINARIES}/lib/libx265.a
+#        ${HDR10_PLUS_LIBRARY}
+#        ${FFMPEG_PLATFORM_LIBRARIES})
+
+include(FindPkgConfig)
+pkg_check_modules(LIBAVCODEC REQUIRED libavcodec)
+
+set(EXTRA_INCLUDE_DIRS
+  ${CMAKE_CURRENT_LIST_DIR}/third-party/ffmpeg-linux-x86_64/include)
 
 include_directories(
         ${CMAKE_CURRENT_SOURCE_DIR}
@@ -495,7 +482,8 @@ include_directories(
         ${CMAKE_CURRENT_SOURCE_DIR}/third-party/moonlight-common-c/enet/include
         ${CMAKE_CURRENT_SOURCE_DIR}/third-party/nanors
         ${CMAKE_CURRENT_SOURCE_DIR}/third-party/nanors/deps/obl
-        ${FFMPEG_INCLUDE_DIRS}
+        ${LIBAVCODEC_INCLUDE_DIRS}
+        ${EXTRA_INCLUDE_DIRS}
         ${PLATFORM_INCLUDE_DIRS}
 )
 
