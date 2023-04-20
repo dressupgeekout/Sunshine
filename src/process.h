@@ -17,7 +17,7 @@
 #include "platform/common.h"
 #include "utility.h"
 
-namespace proc {
+namespace sunshineproc {
   using file_t = util::safe_ptr_v2<FILE, int, fclose>;
 
   typedef config::prep_cmd_t cmd_t;
@@ -114,7 +114,7 @@ namespace proc {
   validate_app_image_path(std::string app_image_path);
   void
   refresh(const std::string &file_name);
-  std::optional<proc::proc_t>
+  std::optional<sunshineproc::proc_t>
   parse(const std::string &file_name);
 
   std::unique_ptr<platf::deinit_t>

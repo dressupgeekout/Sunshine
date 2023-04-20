@@ -417,7 +417,7 @@ namespace confighttp {
     }
 
     outputTree.put("status", "true");
-    proc::refresh(config::stream.file_apps);
+    sunshineproc::refresh(config::stream.file_apps);
   }
 
   void
@@ -466,7 +466,7 @@ namespace confighttp {
     }
 
     outputTree.put("status", "true");
-    proc::refresh(config::stream.file_apps);
+    sunshineproc::refresh(config::stream.file_apps);
   }
 
   void
@@ -722,7 +722,7 @@ namespace confighttp {
       response->write(data.str());
     });
 
-    proc::proc.terminate();
+    sunshineproc::proc.terminate();
     outputTree.put("status", true);
   }
 

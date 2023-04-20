@@ -657,7 +657,7 @@ namespace nvhttp {
     if (!config::nvhttp.resolutions.empty()) {
       tree.add_child("root.SupportedDisplayMode", display_nodes);
     }
-    auto current_appid = proc::proc.running();
+    auto current_appid = sunshineproc::proc.running();
     tree.put("root.PairStatus", pair_status);
     tree.put("root.currentgame", current_appid);
     tree.put("root.state", current_appid > 0 ? "SUNSHINE_SERVER_BUSY" : "SUNSHINE_SERVER_FREE");
@@ -687,7 +687,7 @@ namespace nvhttp {
 
     apps.put("<xmlattr>.status_code", 200);
 
-    for (auto &proc : proc::proc.get_apps()) {
+    for (auto &proc : sunshineproc::proc.get_apps()) {
       pt::ptree app;
 
       app.put("IsHdrSupported"s, video::active_hevc_mode == 3 ? 1 : 0);
@@ -734,7 +734,7 @@ namespace nvhttp {
 
     auto appid = util::from_view(get_arg(args, "appid"));
 
-    auto current_appid = proc::proc.running();
+    auto current_appid = sunshineproc::proc.running();
     if (current_appid > 0) {
       tree.put("root.resume", 0);
       tree.put("root.<xmlattr>.status_code", 400);
@@ -758,7 +758,7 @@ namespace nvhttp {
     }
 
     if (appid > 0) {
-      auto err = proc::proc.execute(appid);
+      auto err = sunshineproc::proc.execute(appid);
       if (err) {
         tree.put("root.<xmlattr>.status_code", err);
         tree.put("root.<xmlattr>.status_message", "Failed to start the specified application");
@@ -799,7 +799,7 @@ namespace nvhttp {
       return;
     }
 
-    auto current_appid = proc::proc.running();
+    auto current_appid = sunshineproc::proc.running();
     if (current_appid == 0) {
       tree.put("root.resume", 0);
       tree.put("root.<xmlattr>.status_code", 503);
@@ -873,8 +873,8 @@ namespace nvhttp {
     tree.put("root.cancel", 1);
     tree.put("root.<xmlattr>.status_code", 200);
 
-    if (proc::proc.running() > 0) {
-      proc::proc.terminate();
+    if (sunshineproc::proc.running() > 0) {
+      sunshineproc::proc.terminate();
     }
   }
 
@@ -883,7 +883,7 @@ namespace nvhttp {
     print_req<SimpleWeb::HTTPS>(request);
 
     auto args = request->parse_query_string();
-    auto app_image = proc::proc.get_app_image(util::from_view(get_arg(args, "appid")));
+    auto app_image = sunshineproc::proc.get_app_image(util::from_view(get_arg(args, "appid")));
 
     std::ifstream in(app_image, std::ios::binary);
     SimpleWeb::CaseInsensitiveMultimap headers;
