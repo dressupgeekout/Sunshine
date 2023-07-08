@@ -249,6 +249,63 @@ elseif(APPLE)
             third-party/TPCircularBuffer/TPCircularBuffer.h
             third-party/tray/tray_darwin.m
             ${APPLE_PLIST_FILE})
+elseif("${CMAKE_SYSTEM_NAME}" STREQUAL "NetBSD")
+    add_compile_definitions(SUNSHINE_PLATFORM="linux")
+
+    option(SUNSHINE_ENABLE_DRM "Enable KMS grab if available" OFF)
+    option(SUNSHINE_ENABLE_X11 "Enable X11 grab if available" ON)
+    option(SUNSHINE_ENABLE_WAYLAND "Enable building wayland specific code" OFF)
+    option(SUNSHINE_ENABLE_CUDA "Enable cuda specific code" OFF)
+    option(SUNSHINE_ENABLE_TRAY "Enable tray icon" OFF)
+
+    find_package(X11)
+
+    if (X11_FOUND)
+        add_compile_definitions(SUNSHINE_BUILD_X11)
+        include_directories(SYSTEM ${X11_INCLUDE_DIR})
+        list(APPEND PLATFORM_LIBRARIES ${X11_LIBRARIES})
+        list(APPEND PLATFORM_TARGET_FILES src/platform/linux/x11grab.cpp)
+    endif()
+
+    list(APPEND PLATFORM_TARGET_FILES
+            src/platform/linux/publish.cpp
+            src/platform/linux/vaapi.h
+            src/platform/linux/vaapi.cpp
+            src/platform/linux/cuda.h
+            src/platform/linux/graphics.h
+            src/platform/linux/graphics.cpp
+            src/platform/linux/misc.h
+            src/platform/linux/misc.cpp
+            src/platform/linux/audio.cpp
+            src/platform/linux/input.cpp
+            src/platform/linux/x11grab.h
+            src/platform/linux/wayland.h
+            third-party/glad/src/egl.c
+            third-party/glad/src/gl.c
+            third-party/glad/include/EGL/eglplatform.h
+            third-party/glad/include/KHR/khrplatform.h
+            third-party/glad/include/glad/gl.h
+            third-party/glad/include/glad/egl.h)
+
+    list(APPEND PLATFORM_LIBRARIES
+            Boost::dynamic_linking
+            dl
+            evdev
+            numa
+            pulse
+            pulse-simple)
+
+    include_directories(
+            SYSTEM
+            /usr/include/libevdev-1.0
+            third-party/nv-codec-headers/include
+            third-party/glad/include)
+
+    if(NOT DEFINED SUNSHINE_EXECUTABLE_PATH)
+        set(SUNSHINE_EXECUTABLE_PATH "sunshine")
+    endif()
+    configure_file(sunshine.service.in sunshine.service @ONLY)
+
 else()
     add_compile_definitions(SUNSHINE_PLATFORM="linux")
 
@@ -498,11 +555,11 @@ set(SUNSHINE_TARGET_FILES
         third-party/tray/tray.h
         src/upnp.cpp
         src/upnp.h
-        src/cbs.cpp
+        #src/cbs.cpp
         src/utility.h
         src/uuid.h
         src/config.h
-        src/config.cpp
+        #src/config.cpp
         src/main.cpp
         src/main.h
         src/crypto.cpp
@@ -587,13 +644,19 @@ set(FFMPEG_LIBRARIES
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
+pkg_check_modules(LIBAVCODEC REQUIRED libavcodec)
+pkg_check_modules(LIBAVUTIL REQUIRED libavutil)
+pkg_check_modules(LIBSWSCALE REQUIRED libswscale)
+
 include_directories(
         SYSTEM
         ${CMAKE_CURRENT_SOURCE_DIR}/third-party
         ${CMAKE_CURRENT_SOURCE_DIR}/third-party/moonlight-common-c/enet/include
         ${CMAKE_CURRENT_SOURCE_DIR}/third-party/nanors
         ${CMAKE_CURRENT_SOURCE_DIR}/third-party/nanors/deps/obl
-        ${FFMPEG_INCLUDE_DIRS}
+        ${LIBAVCODEC_INCLUDE_DIRS}
+        ${LIBAVUTIL_INCLUDE_DIRS}
+        ${LIBSWSCALE_INCLUDE_DIRS}
         ${PLATFORM_INCLUDE_DIRS}
 )
 
