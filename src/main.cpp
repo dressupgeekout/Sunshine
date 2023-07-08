@@ -614,7 +614,7 @@ main(int argc, char *argv[]) {
     BOOST_LOG(error) << "Platform failed to initialize"sv;
   }
 
-  auto proc_deinit_guard = proc::init();
+  auto proc_deinit_guard = sunshineproc::init();
   if (!proc_deinit_guard) {
     BOOST_LOG(error) << "Proc failed to initialize"sv;
   }
